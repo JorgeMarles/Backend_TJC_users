@@ -1,6 +1,9 @@
 import express from "express";
-import { register } from "../controllers/usuarioController";
+import { create, erase, find, update } from "../controllers/UserController";
 
 export const userRouter = express.Router();
 
-userRouter.post("/register", register);
+userRouter.post("/", create);
+userRouter.delete("/", erase);
+userRouter.put("/", update);
+userRouter.get("/", find);
