@@ -1,10 +1,11 @@
 import express from 'express';
+import "reflect-metadata";
 import { PORT, URL_FRONTEND} from './config';
 import { AppDataSource } from './database';
-import "reflect-metadata";
 import bodyParser from 'body-parser';
-import { userRouter } from './routers/UserRouter';
 import cors from 'cors';
+import { userRouter } from './routers/UserRouter';
+import { productRouter } from './routers/ProductRouter';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRouter);
+app.use("/product", productRouter);
 
 const run = async () => {
     try {

@@ -54,7 +54,6 @@ export const updateUser = async (req: Request, res: Response) => {
         const user: unknown = await UserRepository.findOneBy({ email: userUpdate.email }); 
         if (user instanceof User) {
             removeUndefined(user, userUpdate);
-            console.log(userUpdate);
             UserRepository.update(user.id, userUpdate);
             return res.status(200).send({ isUpdate: true, user: userUpdate, message: "User updated succesfully" });
         }
