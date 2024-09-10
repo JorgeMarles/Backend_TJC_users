@@ -5,8 +5,8 @@ import { ProductRepository } from "../repositories/ProductRepository";
 export const createProduct = async (req: Request, res: Response) => {
     try {        
         const product : Product = req.body;
-        await ProductRepository.insert(product);
-        return res.status(201).send({ isCreated: true, message: "Product created succesfully" });
+        const savedProduct = await ProductRepository.save(product);
+        return res.status(201).send({ isCreated: true, message: "Product created succesfully", product: savedProduct });
     }
     catch (error: unknown) {
         console.log(error)
