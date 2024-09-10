@@ -4,8 +4,9 @@
   "description": "Microservices project",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.ts"
+    "dev": "nodemon index.ts",
+    "build": "rimraf ./dist && tsc",
+    "start": "npm run build && node dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -24,7 +25,9 @@
     "express": "^4.19.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.11.0",
+    "npm-ci": "^0.0.2",
     "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1",
     "typeorm": "^0.3.20"
   }
 }
