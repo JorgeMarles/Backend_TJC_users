@@ -1,11 +1,16 @@
 import express from 'express';
-import { PORT } from './config';
+import { PORT, URL_FRONTEND} from './config';
 import { AppDataSource } from './database';
 import "reflect-metadata";
 import bodyParser from 'body-parser';
 import { userRouter } from './routers/UserRouter';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors({
+    origin: URL_FRONTEND
+}));
 
 app.use(bodyParser.json());
 
