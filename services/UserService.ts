@@ -8,6 +8,8 @@ export const createUser = async (req: Request, res: Response) => {
         const user : User = req.body;
         const salt = await bcrypt.genSalt();
         user.password = await bcrypt.hash(user.password, salt); 
+        user.type = false;
+        user.disable = false;
         await UserRepository.insert(user);
         return res.status(201).send({ isCreated: true, message: "User created succesfully" });
     }
