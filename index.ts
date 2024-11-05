@@ -5,6 +5,7 @@ import { AppDataSource } from './database';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { userRouter } from './routers/UserRouter';
+import { sessionRouter } from "./routers/SessionRouter";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRouter);
+app.use("/login", userRouter);
 
 const run = async () => {
     try {

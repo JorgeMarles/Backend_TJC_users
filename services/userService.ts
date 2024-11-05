@@ -1,10 +1,13 @@
 import { Request, Response } from "express"
 import { User } from "../database/entity/User";
 import { UserRepository } from "../repositories/UserRepository";
+import bcrypt from "bcrypt";
 
 export const createUser = async (req: Request, res: Response) => {
     try {        
         const user : User = req.body;
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(user.password, salt); 
         await UserRepository.insert(user);
         return res.status(201).send({ isCreated: true, message: "User created succesfully" });
     }

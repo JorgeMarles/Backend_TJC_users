@@ -1,11 +1,5 @@
 import { Request, Response } from "express";
-import {
-    createUser,
-    disableUser,
-    findUser,
-    findUsers,
-    updateUser,
-} from "../services/userService";
+import { createUser, disableUser, findUser, findUsers, updateUser } from "../services/UserService";
 
 export const create = async (req: Request, res: Response) => {
     try {
