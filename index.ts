@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRouter);
-app.use("/login", sessionRouter);
+app.use("/session", sessionRouter);
 
 const run = async () => {
     try {
