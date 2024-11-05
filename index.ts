@@ -5,7 +5,6 @@ import { AppDataSource } from './database';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { userRouter } from './routers/UserRouter';
-import { productRouter } from './routers/ProductRouter';
 
 const app = express();
 
@@ -21,7 +20,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRouter);
-app.use("/product", productRouter);
 
 const run = async () => {
     try {

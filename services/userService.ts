@@ -19,13 +19,13 @@ export const createUser = async (req: Request, res: Response) => {
     }
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const disableUser = async (req: Request, res: Response) => {
     try {        
         const email: string = req.body["email"];
         const user: unknown = await UserRepository.findOneBy({ email: email });
         if (user instanceof User) {
             UserRepository.delete(user.id);
-            return res.status(200).send({ isErased: true, message: "User erased succesfully" });
+            return res.status(200).send({ isErased: true, message: "User disabled succesfully" });
         }
         else throw Error("The user don't exists");
     }

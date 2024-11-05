@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
-import { createUser, deleteUser, findUser, findUsers, updateUser } from "../services/UserService";
+import {
+    createUser,
+    disableUser,
+    findUser,
+    findUsers,
+    updateUser,
+} from "../services/userService";
 
-export const create = async (req: Request, res : Response) => {
+export const create = async (req: Request, res: Response) => {
     try {
         createUser(req, res);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         if (error instanceof Error) {
             res.status(400).json({ success: false, message: error.message });
@@ -13,11 +18,10 @@ export const create = async (req: Request, res : Response) => {
     }
 };
 
-export const erase = async (req: Request, res : Response) => {
+export const disable = async (req: Request, res: Response) => {
     try {
-        deleteUser(req, res);
-    }
-    catch (error) {
+        disableUser(req, res);
+    } catch (error) {
         console.error(error);
         if (error instanceof Error) {
             res.status(400).json({ success: false, message: error.message });
@@ -25,11 +29,10 @@ export const erase = async (req: Request, res : Response) => {
     }
 };
 
-export const update = async (req: Request, res : Response) => {
+export const update = async (req: Request, res: Response) => {
     try {
         updateUser(req, res);
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         if (error instanceof Error) {
             res.status(400).json({ success: false, message: error.message });
@@ -37,16 +40,14 @@ export const update = async (req: Request, res : Response) => {
     }
 };
 
-export const find = async (req: Request, res : Response) => {
+export const find = async (req: Request, res: Response) => {
     try {
         if (req.query["email"] != undefined) {
             findUser(req, res);
-        }
-        else {
+        } else {
             findUsers(req, res);
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         if (error instanceof Error) {
             res.status(400).json({ success: false, message: error.message });

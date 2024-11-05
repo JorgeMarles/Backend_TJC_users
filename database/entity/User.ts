@@ -1,21 +1,25 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
-import { Bill } from './Bill'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'users' })
+@Entity({ name: "users" })
 export class User {
-
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('varchar', { length: 50 })
+    @Column("varchar", { length: 50 })
+    name: string;
+
+    @Column("varchar", { length: 50 })
+    nickname: string;
+
+    @Column("varchar", { length: 50 })
     email: string;
 
-    @Column('varchar', { length: 50 })
-    username: string;
-
-    @Column('varchar', { length: 200 })
+    @Column("varchar", { length: 200 })
     password: string;
 
-    @OneToMany(() => Bill, (bill) => bill.user)
-    bills: Bill[];
+    @Column("boolean")
+    type: boolean;
+
+    @Column("boolean")
+    disable: boolean;
 }
