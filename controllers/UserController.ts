@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { createUser, disableUser, findUser, findUsers, updateUser } from "../services/UserService";
+import { createUser, disableUser, findUser, findUsers, updateUser, updateUserPassword } from "../services/UserService";
+import { sendEmail, validateCode } from "../services/EmailService";
 
 export const create = async (req: Request, res: Response) => {
     try {
@@ -41,6 +42,31 @@ export const find = async (req: Request, res: Response) => {
         } else {
             findUsers(req, res);
         }
+    } catch (error) {
+        console.error(error);
+        if (error instanceof Error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+};
+
+export const sendCode = async (req: Request, res: Response) => {
+    try {
+        await sendEmail(req, res);
+    } catch (error) {
+        console.error(error);
+        if (error instanceof Error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+};
+
+
+export const updatePassword = async (req: Request, res: Response) => {
+    try {
+        validateCode(req, res);
+        
+        updateUserPassword(req, res);
     } catch (error) {
         console.error(error);
         if (error instanceof Error) {

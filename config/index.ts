@@ -11,3 +11,5 @@ export const TABLE_NAMES = process.env.TABLE_NAMES || "";
 export const URL_FRONTEND = process.env.URL_FRONTEND || "";
 export const URL_PRIVATE_KEY = process.env.URL_PRIVATE_KEY || "";
 export const URL_PUBLIC_KEY = process.env.URL_PUBLIC_KEY || "";
+export const SMTP_USER = process.env.SMTP_USER || "";
+export const SMTP_PWD = process.env.SMTP_PWD || "";

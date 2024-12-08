@@ -56,15 +56,45 @@ const removeUndefined = <T extends User>(user: T, userUpdate: T) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {        
         const userUpdate: User = req.body;
-        userUpdate.type = false;
-        userUpdate.disable = false;
         const user: unknown = await UserRepository.findOneBy({ email: userUpdate.email }); 
         if (user instanceof User) {
             removeUndefined(user, userUpdate);
             UserRepository.update(user.id, userUpdate);
-            return res.status(200).send({ isUpdate: true, user: userUpdate, message: "User updated succesfully" });
+            return res.status(200).send({ isUpdate: true, message: "User updated succesfully" });
         }
         else throw Error("The user don't exists");
+    }
+    catch (error: unknown) {
+        console.log(error);
+        if (error instanceof Error) {
+            return res.status(400).send({ isUpdate: false, message: error.message });
+        }
+        else {
+            return res.status(400).send({ isUpdate: false, message: "Something went wrong"});
+        }
+    }
+};
+
+export const updateUserPassword = async (req: Request, res: Response) => {
+    try {        
+        const email: unknown = req.body.email;
+        if (!(typeof email == "string")) {
+            throw new Error("Invalid input: User email is missing or undefined. Please ensure that the email address is provided and try again.");
+        }
+        const password: unknown = req.body.password;
+        if (!(typeof password == "string")) {
+            throw new Error("Invalid input: User new password is missing or undefined. Please ensure that the new password is provided and try again.");
+        }
+        const user: unknown = await UserRepository.findOneBy({ email: email }); 
+        if (!(user instanceof User)) {
+            throw Error("The user doesn't exists");
+        }
+        const userUpdate: User = user;
+        const salt = await bcrypt.genSalt();
+        userUpdate.password = await bcrypt.hash(password, salt);
+        UserRepository.update(user.id, userUpdate);
+
+        return res.status(200).send({ isUpdate: true, message: "User updated succesfully" });
     }
     catch (error: unknown) {
         console.log(error);
