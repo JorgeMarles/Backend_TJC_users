@@ -56,6 +56,8 @@ const removeUndefined = <T extends User>(user: T, userUpdate: T) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {        
         const userUpdate: User = req.body;
+        userUpdate.type = false;
+        userUpdate.disable = false;
         const user: unknown = await UserRepository.findOneBy({ email: userUpdate.email }); 
         if (user instanceof User) {
             removeUndefined(user, userUpdate);

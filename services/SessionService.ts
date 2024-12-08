@@ -19,7 +19,7 @@ export const login = async (req: Request, res: Response) => {
         if (user instanceof User) {
             const passwordMatched = await bcrypt.compare(credentials.password, user.password);
             if (passwordMatched) {
-                const token = jwt.sign( { email: credentials.email } , SECRET_KEY, { expiresIn: "1h" });
+                const token = jwt.sign( { email: credentials.email, type: user.type } , SECRET_KEY, { expiresIn: "1h" });
                 return res.status(200).json({ token });
             }
             else throw Error("The password is incorrect");
