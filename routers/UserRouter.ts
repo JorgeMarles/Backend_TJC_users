@@ -10,5 +10,3 @@ userRouter.put("/recoveryPassword", updatePassword);
 userRouter.delete("/", authenticate(['admin']), disable);
 userRouter.put("/", authenticate(['admin', 'user']), update);
 userRouter.get("/", authenticate(['admin']), find);
-//userRouter.get("/all", get_all);
-//userRouter.get("/:id", );
