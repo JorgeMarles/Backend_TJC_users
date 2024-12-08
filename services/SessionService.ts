@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
             const passwordMatched = await bcrypt.compare(credentials.password, user.password);
             if (passwordMatched) {
                 const type = user.type ? "admin" : "user";
-                const token = jwt.sign({ email: credentials.email, type: type }, PRIVATE_KEY, { algorithm: "RS256", expiresIn: "1h" });
+                const token = jwt.sign({ email: credentials.email, type: type, nickname:user.nickname }, PRIVATE_KEY, { algorithm: "RS256", expiresIn: "1h" });
                 return res.status(200).json({ token });
             }
             else throw Error("The password is incorrect");
