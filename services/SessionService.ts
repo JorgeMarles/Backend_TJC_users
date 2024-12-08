@@ -4,10 +4,11 @@ import { User } from "../database/entity/User";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import fs from 'fs';
+import { URL_PRIVATE_KEY, URL_PUBLIC_KEY } from "../config";
 
 // const SECRET_KEY = crypto.randomBytes(64).toString('hex');
-const PRIVATE_KEY = fs.readFileSync("./private.key", "utf8");
-const PUBLIC_KEY = fs.readFileSync("../public.key", "utf8");
+const PRIVATE_KEY = fs.readFileSync(URL_PRIVATE_KEY, "utf8");
+const PUBLIC_KEY = fs.readFileSync(URL_PUBLIC_KEY, "utf8");
 
 interface Credentials {
     email: string;

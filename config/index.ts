@@ -9,3 +9,5 @@ export const DB_NAME = process.env.DB_NAME || "";
 export const DB_PORT = process.env.DB_PORT || "";
 export const TABLE_NAMES = process.env.TABLE_NAMES || "";
 export const URL_FRONTEND = process.env.URL_FRONTEND || "";
+export const URL_PRIVATE_KEY = process.env.URL_PRIVATE_KEY || "";
+export const URL_PUBLIC_KEY = process.env.URL_PUBLIC_KEY || "";
