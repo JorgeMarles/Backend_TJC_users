@@ -49,23 +49,57 @@ export const disableUser = async (req: Request, res: Response) => {
 };
 
 const removeUndefined = <T extends User>(user: T, userUpdate: T) => {
+    const cleanUser: T = { ...userUpdate } as T;
+
     for (let key in user) {
-        if (userUpdate[key] == undefined) {
-            userUpdate[key] = user[key];
+        if (userUpdate[key as keyof T] === undefined) {
+            cleanUser[key as keyof T] = user[key];
         }
     }
+
+    for (let key in cleanUser) {
+        if (!(key in user)) {
+            delete cleanUser[key as keyof T];
+        }
+    }
+
+    return cleanUser;
 };
 
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const userUpdate: User = req.body;
-        const user: unknown = await UserRepository.findOneBy({ email: userUpdate.email });
-        if (user instanceof User) {
-            removeUndefined(user, userUpdate);
-            UserRepository.update(user.id, userUpdate);
+        const user: unknown = await UserRepository.findOneBy({ id: userUpdate.id });
+        if (!(user instanceof User)) {
+            throw Error("The user doesn't exists");
+        }
+        const salt = await bcrypt.genSalt();
+
+        const header = req.header("Authorization") || "";
+        const token = header.split(" ")[1];
+        const payload = jwt.verify(token, PUBLIC_KEY, { algorithms: ["RS256"] }) as TokenPayload;
+        const userOwn: unknown = await UserRepository.findOneBy({ email: payload.email });
+        let access = false;
+        if ((userOwn instanceof User) && userOwn.id === userUpdate.id) {
+            const passwordMatched = await bcrypt.compare(userUpdate.password, user.password);
+            if (passwordMatched) {
+                userUpdate.password = user.password;
+                userUpdate.type = userOwn.type;
+                access = true;
+            }
+        }
+        else if (payload.type === "admin") {
+            access = true;
+        }
+        if (access) {
+            if ("newPassword" in userUpdate && typeof userUpdate.newPassword == "string") {
+                userUpdate.password = await bcrypt.hash(userUpdate.newPassword, salt);
+            }
+            const cleanUser = removeUndefined(user, userUpdate);
+            UserRepository.update(user.id, cleanUser);
             return res.status(200).send({ isUpdate: true, message: "User updated succesfully" });
         }
-        else throw Error("The user don't exists");
+        throw Error("Access denied");
     }
     catch (error: unknown) {
         console.log(error);
