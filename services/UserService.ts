@@ -32,7 +32,8 @@ export const disableUser = async (req: Request, res: Response) => {
         const email: string = req.body["email"];
         const user: unknown = await UserRepository.findOneBy({ email: email });
         if (user instanceof User) {
-            UserRepository.delete(user.id);
+            user.disable = true;
+            UserRepository.update(user.id, user);
             return res.status(200).send({ isErased: true, message: "User disabled succesfully" });
         }
         else throw Error("The user don't exists");
@@ -175,7 +176,7 @@ export const findUser = async (req: Request, res: Response) => {
 
 export const findUsers = async (req: Request, res: Response) => {
     try {
-        const users: User[] = await UserRepository.find({ where: { type: false } });
+        const users: User[] = await UserRepository.find({ where: { type: false, disable: false } });
         return res.status(200).send({ users: users });
     }
     catch (error: unknown) {
