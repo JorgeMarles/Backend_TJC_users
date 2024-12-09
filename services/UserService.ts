@@ -148,10 +148,17 @@ export const updateUserPassword = async (req: Request, res: Response) => {
 export const findUser = async (req: Request, res: Response) => {
     try {
         const email: unknown = req.query.email;
-        if (!(typeof email == "string")) {
+        const id: unknown = req.query.id;
+        if (!(typeof email == "string") && !(typeof id == "string")) {
             throw Error("Invalid data");
         }
-        const user: unknown = await UserRepository.findOneBy({ email: email });
+        let user: unknown;
+        if(typeof email == "string") {
+            user = await UserRepository.findOneBy({ email: email });
+        }
+        else if(typeof id == "string"){
+            user = await UserRepository.findOneBy({ id: parseInt(id) });
+        }
         if (!(user instanceof User)) {
             throw Error("The user doesn't exists");
         }
