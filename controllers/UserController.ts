@@ -35,6 +35,17 @@ export const update = async (req: Request, res: Response) => {
     }
 };
 
+export const findOne = async (req: Request, res: Response) => {
+    try {
+        findUser(req, res);
+    } catch (error) {
+        console.error(error);
+        if (error instanceof Error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    }
+};
+
 export const find = async (req: Request, res: Response) => {
     try {
         if (req.query["email"] != undefined) {

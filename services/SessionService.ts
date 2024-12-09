@@ -8,14 +8,14 @@ import { URL_PRIVATE_KEY, URL_PUBLIC_KEY } from "../config";
 
 // const SECRET_KEY = crypto.randomBytes(64).toString('hex');
 const PRIVATE_KEY = fs.readFileSync(URL_PRIVATE_KEY, "utf8");
-const PUBLIC_KEY = fs.readFileSync(URL_PUBLIC_KEY, "utf8");
+export const PUBLIC_KEY = fs.readFileSync(URL_PUBLIC_KEY, "utf8");
 
 interface Credentials {
     email: string;
     password: string;
 };
 
-interface TokenPayload {
+export interface TokenPayload {
     email: string;
     type: string;
     exp: number;
@@ -33,7 +33,7 @@ export const login = async (req: Request, res: Response) => {
             const passwordMatched = await bcrypt.compare(credentials.password, user.password);
             if (passwordMatched) {
                 const type = user.type ? "admin" : "user";
-                const token = jwt.sign({ email: credentials.email, type: type, nickname:user.nickname }, PRIVATE_KEY, { algorithm: "RS256", expiresIn: "1h" });
+                const token = jwt.sign({ email: credentials.email, type: type, nickname: user.nickname }, PRIVATE_KEY, { algorithm: "RS256", expiresIn: "1h" });
                 return res.status(200).json({ token });
             }
             else throw Error("The password is incorrect");
