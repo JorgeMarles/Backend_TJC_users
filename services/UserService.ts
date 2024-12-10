@@ -27,6 +27,27 @@ export const createUser = async (req: Request, res: Response) => {
     }
 };
 
+export const createUserAdmin = async (req: Request, res: Response) => {
+    try {
+        const user: User = req.body;
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(user.password, salt);
+        user.type = true;
+        user.disable = false;
+        await UserRepository.insert(user);
+        return res.status(201).send({ isCreated: true, message: "Admin created succesfully" });
+    }
+    catch (error: unknown) {
+        console.log(error)
+        if (error instanceof Error) {
+            return res.status(400).send({ isCreated: false, message: error.message });
+        }
+        else {
+            return res.status(400).send({ isCreated: false, message: "Something went wrong" });
+        }
+    }
+};
+
 export const disableUser = async (req: Request, res: Response) => {
     try {
         const email: string = req.body["email"];

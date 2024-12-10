@@ -1,10 +1,11 @@
 import express from "express";
-import { create, disable, find, update, sendCode, updatePassword, findOne } from "../controllers/UserController";
+import { create, disable, find, update, sendCode, updatePassword, findOne, createAdmin } from "../controllers/UserController";
 import { authenticate } from "../services/SessionService";
 
 export const userRouter = express.Router();
 
 userRouter.post("/", create);
+userRouter.post("/admin", createAdmin);
 userRouter.post("/sendCode", sendCode);
 userRouter.put("/recoveryPassword", updatePassword);
 userRouter.delete("/", authenticate(['admin']), disable);
