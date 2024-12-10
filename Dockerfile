@@ -7,6 +7,12 @@ COPY package*.json .
 
 COPY .env .
 
+#Temporal-pruebas
+COPY private.key /app/private.key
+
+COPY publicz.key /app/public.key
+
+
 RUN npm install
 
 COPY . .
@@ -21,6 +27,12 @@ WORKDIR /app
 COPY package*.json .
 
 COPY .env .
+
+#Temporal-pruebas
+COPY private.key /app/private.key
+
+COPY public.key /app/public.key
+
 
 RUN npm ci --only=production
 
