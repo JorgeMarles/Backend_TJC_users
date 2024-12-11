@@ -16,9 +16,9 @@ export const createUser = async (req: Request, res: Response) => {
         user.type = false;
         user.disable = false;
         const newUser = await UserRepository.save(user);
-        
-        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, {id: newUser.id});
-        if(response.status != 201) {
+
+        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, { id: newUser.id });
+        if (response.status != 201) {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
         }
@@ -45,8 +45,8 @@ export const createUserAdmin = async (req: Request, res: Response) => {
         user.disable = false;
         const newUser = await UserRepository.save(user);
 
-        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, {id: newUser.id});
-        if(response.status != 201) {
+        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, { id: newUser.id });
+        if (response.status != 201) {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
         }
@@ -190,22 +190,17 @@ export const findUser = async (req: Request, res: Response) => {
             throw Error("Invalid data");
         }
         let user: unknown;
-        if(typeof email == "string") {
+        if (typeof email == "string") {
             user = await UserRepository.findOneBy({ email: email });
         }
-        else if(typeof id == "string"){
+        else if (typeof id == "string") {
             user = await UserRepository.findOneBy({ id: parseInt(id) });
         }
         if (!(user instanceof User)) {
             throw Error("The user doesn't exists");
         }
-        const header = req.header("Authorization") || "";
-        const token = header.split(" ")[1];
-        const payload = jwt.verify(token, PUBLIC_KEY, { algorithms: ["RS256"] }) as TokenPayload;
-        if (payload.email === user.email || payload.type === "admin") {
-            return res.status(200).send({ user: user });
-        }
-        throw Error("Access denied");
+        return res.status(200).send({ user: user });
+
     }
     catch (error: unknown) {
         console.log(error);
