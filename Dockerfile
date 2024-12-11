@@ -10,7 +10,7 @@ COPY .env .
 #Temporal-pruebas
 COPY private.key /app/private.key
 
-COPY publicz.key /app/public.key
+COPY public.key /app/public.key
 
 
 RUN npm install
