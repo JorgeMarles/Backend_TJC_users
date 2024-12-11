@@ -4,6 +4,8 @@ import { UserRepository } from "../repositories/UserRepository";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PUBLIC_KEY, TokenPayload } from "./SessionService";
+import axios from "axios";
+import { URL_BACKEND_PROBLEM } from "../config";
 
 
 export const createUser = async (req: Request, res: Response) => {
@@ -13,7 +15,14 @@ export const createUser = async (req: Request, res: Response) => {
         user.password = await bcrypt.hash(user.password, salt);
         user.type = false;
         user.disable = false;
-        await UserRepository.insert(user);
+        const newUser = await UserRepository.save(user);
+        
+        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, {id: newUser.id});
+        if(response.status != 201) {
+            UserRepository.delete(newUser.id);
+            throw Error(`Error creating user`);
+        }
+
         return res.status(201).send({ isCreated: true, message: "User created succesfully" });
     }
     catch (error: unknown) {
@@ -34,7 +43,14 @@ export const createUserAdmin = async (req: Request, res: Response) => {
         user.password = await bcrypt.hash(user.password, salt);
         user.type = true;
         user.disable = false;
-        await UserRepository.insert(user);
+        const newUser = await UserRepository.save(user);
+
+        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, {id: newUser.id});
+        if(response.status != 201) {
+            UserRepository.delete(newUser.id);
+            throw Error(`Error creating user`);
+        }
+
         return res.status(201).send({ isCreated: true, message: "Admin created succesfully" });
     }
     catch (error: unknown) {
