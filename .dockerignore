@@ -1,0 +1,11 @@
+.github
+dist
+node_modules
+.dockerignore
+.env
+.git
+.gitignore
+Dockerfile
+private.key
+public.key
+README.md

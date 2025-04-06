@@ -19,7 +19,7 @@ const database_1 = require("./database");
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const UserRouter_1 = require("./routers/UserRouter");
-const ProductRouter_1 = require("./routers/ProductRouter");
+const SessionRouter_1 = require("./routers/SessionRouter");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: config_1.URL_FRONTEND
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use("/user", UserRouter_1.userRouter);
-app.use("/product", ProductRouter_1.productRouter);
+app.use("/session", SessionRouter_1.sessionRouter);
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database_1.AppDataSource.initialize();
