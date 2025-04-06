@@ -1,7 +1,0 @@
-services:
-  app:
-    build: .
-    volumes:
-      - ./private.key:/app/private.key
-      - ./public.key:/app/public.key
-    env_file: .env
