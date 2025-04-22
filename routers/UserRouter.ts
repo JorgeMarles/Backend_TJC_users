@@ -10,5 +10,5 @@ userRouter.post("/sendCode", sendCode);
 userRouter.put("/recoveryPassword", updatePassword);
 userRouter.delete("/", authenticate(['admin']), disable);
 userRouter.put("/", authenticate(['admin', 'user']), update);
-userRouter.get("/findOne", authenticate(['admin', 'user']), findOne);
+userRouter.get("/findOne", authenticate(['admin', 'user', 'service']), findOne);
 userRouter.get("/", authenticate(['admin']), find);
