@@ -4,8 +4,7 @@ import { UserRepository } from "../repositories/UserRepository";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PUBLIC_KEY, TokenPayload } from "./SessionService";
-import axios from "axios";
-import { URL_BACKEND_PROBLEM } from "../config";
+import { apiContest, apiProblems } from "../middleware/interceptor";
 
 
 export const createUser = async (req: Request, res: Response) => {
@@ -17,8 +16,9 @@ export const createUser = async (req: Request, res: Response) => {
         user.disable = false;
         const newUser = await UserRepository.save(user);
 
-        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, { id: newUser.id });
-        if (response.status != 201) {
+        const responseProblems = await apiProblems.post(`/user`, { id: newUser.id });
+        const responseContests = await apiContest.post(`/contest/user`, { id: newUser.id });
+        if (responseProblems.status != 201 && responseContests.status != 201) {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
         }
@@ -45,8 +45,9 @@ export const createUserAdmin = async (req: Request, res: Response) => {
         user.disable = false;
         const newUser = await UserRepository.save(user);
 
-        const response = await axios.post(`${URL_BACKEND_PROBLEM}/user`, { id: newUser.id });
-        if (response.status != 201) {
+        const responseProblems = await apiProblems.post(`/user`, { id: newUser.id });
+        const responseContests = await apiContest.post(`/contest/user`, { id: newUser.id });
+        if (responseProblems.status != 201 && responseContests.status != 201) {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
         }
@@ -199,6 +200,7 @@ export const findUser = async (req: Request, res: Response) => {
         if (!(user instanceof User)) {
             throw Error("The user doesn't exists");
         }
+        delete (user as any).password;
         return res.status(200).send({ user: user });
 
     }
@@ -216,6 +218,9 @@ export const findUser = async (req: Request, res: Response) => {
 export const findUsers = async (req: Request, res: Response) => {
     try {
         const users: User[] = await UserRepository.find({ where: { type: false, disable: false } });
+        for(const user of users) {
+            delete (user as any).password;
+        }
         return res.status(200).send({ users: users });
     }
     catch (error: unknown) {
