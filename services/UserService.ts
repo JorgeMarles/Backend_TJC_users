@@ -17,7 +17,7 @@ export const createUser = async (req: Request, res: Response) => {
         const newUser = await UserRepository.save(user);
 
         const responseProblems = await apiProblems.post(`/user`, { id: newUser.id });
-        const responseContests = await apiContest.post(`/contest/user`, { id: newUser.id });
+        const responseContests = await apiContest.post(`/user`, { id: newUser.id });
         if (responseProblems.status != 201 && responseContests.status != 201) {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
