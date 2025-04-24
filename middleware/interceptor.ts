@@ -42,4 +42,4 @@ export const apiContest = axios.create({
 
 
 addAuthInterceptor(apiProblems);
-
+addAuthInterceptor(apiContest);
