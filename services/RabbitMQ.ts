@@ -70,14 +70,16 @@ export const connectRabbitMQ = async () => {
     }
 }
 
-type UserMessage = {
+type UserData = {
     userId: number;
 }
 
-type Message = {
+type UserMessage = {
     type: "user";
-    data: UserMessage
+    data: UserData
 }
+
+type Message = UserMessage;
 
 export const sendUserMessage = async (userId: number) => {
     const message: Message = {
