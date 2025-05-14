@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PUBLIC_KEY, TokenPayload } from "./SessionService";
 import { apiContest, apiProblems } from "../middleware/interceptor";
+import { sendUserMessage } from "./RabbitMQ";
 
 
 export const createUser = async (req: Request, res: Response) => {
@@ -22,7 +23,7 @@ export const createUser = async (req: Request, res: Response) => {
             UserRepository.delete(newUser.id);
             throw Error(`Error creating user`);
         }
-
+        await sendUserMessage(newUser.id);
         return res.status(201).send({ isCreated: true, message: "User created succesfully" });
     }
     catch (error: unknown) {
@@ -217,8 +218,13 @@ export const findUser = async (req: Request, res: Response) => {
 
 export const findUsers = async (req: Request, res: Response) => {
     try {
-        const users: User[] = await UserRepository.find({ where: { type: false, disable: false } });
-        for(const user of users) {
+        let users: User[];
+        if (req.query.q && typeof req.query.q == "string") {
+            users = await UserRepository.findUsersBySearch(req.query.q as string);
+        } else {
+            users = await UserRepository.find({ where: { type: false, disable: false } });
+        }
+        for (const user of users) {
             delete (user as any).password;
         }
         return res.status(200).send({ users: users });

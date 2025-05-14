@@ -14,3 +14,7 @@ export const URL_PRIVATE_KEY = process.env.URL_PRIVATE_KEY || "";
 export const URL_PUBLIC_KEY = process.env.URL_PUBLIC_KEY || "";
 export const SMTP_USER = process.env.SMTP_USER || "";
 export const SMTP_PWD = process.env.SMTP_PWD || "";
+export const RABBITMQ_USERNAME = process.env.RABBITMQ_USERNAME || "";
+export const RABBITMQ_PASSWORD = process.env.RABBITMQ_PASSWORD || "";
+export const RABBITMQ_HOST = process.env.RABBITMQ_HOST || "";
+export const RABBITMQ_PORT = process.env.RABBITMQ_PORT || "";

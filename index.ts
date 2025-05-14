@@ -1,11 +1,12 @@
 import express from 'express';
 import "reflect-metadata";
-import { PORT, URL_FRONTEND} from './config';
+import { PORT, URL_FRONTEND } from './config';
 import { AppDataSource } from './database';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { userRouter } from './routers/UserRouter';
 import { sessionRouter } from "./routers/SessionRouter";
+import { connectRabbitMQ } from './services/RabbitMQ';
 
 const app = express();
 
@@ -32,6 +33,15 @@ const run = async () => {
             console.log(e.message);
         }
         else console.log("Error during Data Source initialization");
+    }
+
+    try {
+        await connectRabbitMQ();
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            console.error(e.message);
+        }
+        else console.error("Error connecting to RabbitMQ");
     }
     app.listen(PORT, () => console.log(`Listening in port ${PORT}`));
 };
