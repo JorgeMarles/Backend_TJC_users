@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { PUBLIC_KEY, TokenPayload } from "./SessionService";
 import { apiContest, apiProblems } from "../middleware/interceptor";
-import { sendUserMessage } from "./RabbitMQ";
+import { sendUserCreationMessage, sendUserMessage } from "./RabbitMQ";
 
 
 export const createUser = async (req: Request, res: Response) => {
@@ -16,14 +16,8 @@ export const createUser = async (req: Request, res: Response) => {
         user.type = false;
         user.disable = false;
         const newUser = await UserRepository.save(user);
-
-        const responseProblems = await apiProblems.post(`/user`, { id: newUser.id });
-        const responseContests = await apiContest.post(`/user`, { id: newUser.id });
-        if (responseProblems.status != 201 && responseContests.status != 201) {
-            UserRepository.delete(newUser.id);
-            throw Error(`Error creating user`);
-        }
-        await sendUserMessage(newUser.id);
+        sendUserMessage(newUser.id);
+        sendUserCreationMessage(newUser.id);
         return res.status(201).send({ isCreated: true, message: "User created succesfully" });
     }
     catch (error: unknown) {
@@ -46,12 +40,8 @@ export const createUserAdmin = async (req: Request, res: Response) => {
         user.disable = false;
         const newUser = await UserRepository.save(user);
 
-        const responseProblems = await apiProblems.post(`/user`, { id: newUser.id });
-        const responseContests = await apiContest.post(`/contest/user`, { id: newUser.id });
-        if (responseProblems.status != 201 && responseContests.status != 201) {
-            UserRepository.delete(newUser.id);
-            throw Error(`Error creating user`);
-        }
+        sendUserMessage(newUser.id);
+        sendUserCreationMessage(newUser.id);
 
         return res.status(201).send({ isCreated: true, message: "Admin created succesfully" });
     }

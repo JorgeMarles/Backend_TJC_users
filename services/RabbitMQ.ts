@@ -33,6 +33,14 @@ const rmq: RabbitMQUtils = {
     queuesOut: {
         'user-stats': {
             queue: null
+        },
+        'user-creation': {
+            info: {
+                type: 'fanout',           // Cambiar a fanout
+                exchange: 'user-broadcast',
+                arguments: {}
+            },
+            queue: null
         }
     },
     channel: null
@@ -45,25 +53,25 @@ export const connectRabbitMQ = async () => {
         const connection = await ampq.connect(getRabbitMQURL());
         const channel = await connection.createChannel();
 
+
         for (const key in rmq.queuesOut) {
             const queue = key;
-            rmq.queuesOut[key].queue = await channel.assertQueue(queue, { durable: true });
+            
             if (rmq.queuesOut[key].info) {
                 const { type, exchange } = rmq.queuesOut[key].info;
-                await channel.assertExchange(exchange, type, { durable: true, arguments: rmq.queuesOut[key].info.arguments });
-                await channel.bindQueue(queue, exchange, key);
+                await channel.assertExchange(exchange, type, { 
+                    durable: true, 
+                    arguments: rmq.queuesOut[key].info.arguments 
+                });
+            
+            } else {
+                rmq.queuesOut[key].queue = await channel.assertQueue(queue, { durable: true });
             }
+            
             console.log(`Queue ${queue} is ready`);
         }
 
-        for (const key in rmq.queuesIn) {
-            const queue = key;
-            rmq.queuesIn[key].queue = await channel.assertQueue(queue, { durable: true });
-            channel.consume(queue, async (msg) => rmq.queuesIn![key].consume(channel, msg), { noAck: false });
-        }
-
         rmq.channel = channel;
-
     } catch (error) {
         console.error('Error connecting to RabbitMQ:', error);
         throw error;
@@ -79,7 +87,7 @@ type UserMessage = {
     data: UserData
 }
 
-type Message = UserMessage;
+type Message = UserMessage | UserData;
 
 export const sendUserMessage = async (userId: number) => {
     const message: Message = {
@@ -90,6 +98,31 @@ export const sendUserMessage = async (userId: number) => {
     }
     await publishMessage('user-stats', JSON.stringify(message));
     console.log(`Sent message for user ${userId}`);
+}
+
+export const sendUserCreationMessage = async (userId: number) => {
+    const message: Message = {
+        userId
+    }
+
+    await publishToExchange('user-broadcast', '', JSON.stringify(message));
+    console.log(`Broadcast message for create user with id ${userId}`);
+}
+
+const publishToExchange = async (exchange: string, routingKey: string, message: string, options?: ampq.Options.Publish) => {
+    try {
+        if (!rmq.channel) {
+            throw new Error('Channel is not initialized');
+        }
+        
+        rmq.channel.publish(exchange, routingKey, Buffer.from(message), { 
+            ...options, 
+            persistent: true 
+        });
+    } catch (error) {
+        console.error(`Error publishing message to exchange ${exchange}:`, error);
+        throw error;
+    }
 }
 
 const publishMessage = async (queue: string, message: string, options?: ampq.Options.Publish) => {
